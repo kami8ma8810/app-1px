@@ -11,7 +11,13 @@ vi.mock('../ProblemDisplay.vue', () => ({
     name: 'ProblemDisplay',
     props: ['problem', 'showModified', 'showAnswer', 'disabled'],
     emits: ['answer'],
-    template: '<div class="problem-display" @click="$emit(\'answer\', true)">Problem Display</div>'
+    setup(props: any, { emit }: any) {
+      const handleClick = (isCorrect: boolean) => {
+        emit('answer', isCorrect)
+      }
+      return { handleClick }
+    },
+    template: '<div class="problem-display" @click="handleClick(true)">Problem Display <button @click.stop="handleClick(false)">Wrong</button></div>'
   }
 }))
 
@@ -58,10 +64,9 @@ describe('GameScreen', () => {
       }
     })
     
-    // Initially, next button should not exist (but top button exists)
-    const buttons = wrapper.findAll('button')
-    expect(buttons.length).toBe(1) // Only top button
-    expect(buttons[0].text()).toContain('トップに戻る')
+    // Initially, next button should not exist
+    let nextButton = wrapper.find('button:contains("次の問題へ")')
+    expect(nextButton.exists()).toBe(false)
     
     // Simulate correct answer
     const problemDisplay = wrapper.findComponent({ name: 'ProblemDisplay' })
@@ -71,9 +76,10 @@ describe('GameScreen', () => {
     await new Promise(resolve => setTimeout(resolve, 1600))
     
     // Next button should now be visible
-    const buttonsAfter = wrapper.findAll('button')
-    expect(buttonsAfter.length).toBe(2) // Top button + Next button
-    expect(buttonsAfter[1].text()).toBe('次の問題へ')
+    nextButton = wrapper.find('button')
+    const allButtons = wrapper.findAll('button')
+    const nextButtonFound = allButtons.some(b => b.text().includes('次の問題へ'))
+    expect(nextButtonFound).toBe(true)
   })
 
   it('should show answer and explanation on wrong answer', async () => {
@@ -86,39 +92,46 @@ describe('GameScreen', () => {
       }
     })
     
+    // Wait for component to be fully mounted
     await wrapper.vm.$nextTick()
     
-    // Mock wrong answer
+    // Find ProblemDisplay component
     const problemDisplay = wrapper.findComponent({ name: 'ProblemDisplay' })
+    expect(problemDisplay.exists()).toBe(true)
     
-    // Emit wrong answer
-    problemDisplay.vm.$emit('answer', false)
+    // Before answer - should not show answer or be disabled
+    expect(problemDisplay.props('showAnswer')).toBe(false)
+    expect(problemDisplay.props('disabled')).toBe(false)
     
-    // Multiple nextTicks to ensure all reactive updates are processed
+    // Simulate wrong answer by clicking the Wrong button
+    const wrongButton = problemDisplay.find('button')
+    await wrongButton.trigger('click')
+    
+    // Wait for Vue updates
     await wrapper.vm.$nextTick()
-    await wrapper.vm.$nextTick()
-    await wrapper.vm.$nextTick()
+    await new Promise(resolve => setTimeout(resolve, 200))
     
-    // Check the component's data directly
-    const gameScreenVm = wrapper.vm as any
-    expect(gameScreenVm.hasAnswered).toBe(true)
-    expect(gameScreenVm.isCorrect).toBe(false)
-    expect(gameScreenVm.showAnswer).toBe(true)
-    
-    // Should show answer and move to next problem
+    // After answer - should show answer and be disabled
     expect(problemDisplay.props('showAnswer')).toBe(true)
     expect(problemDisplay.props('disabled')).toBe(true)
     
-    // Should show explanation
-    const explanationText = wrapper.text()
-    expect(explanationText).toContain('不正解')
+    // Check that explanation is shown
+    const html = wrapper.html()
+    expect(html).toContain('不正解')
     
-    // Wait for timeout
+    // Check problem description is shown
+    const currentProblem = store.currentProblem
+    if (currentProblem) {
+      expect(html).toContain(currentProblem.description)
+    }
+    
+    // Wait for the next button to appear
     await new Promise(resolve => setTimeout(resolve, 1100))
     
-    // Next button should be visible
-    const buttons = wrapper.findAll('button')
-    expect(buttons.length).toBe(2) // Top button + Next button
+    // Next button should now be visible
+    const allButtons = wrapper.findAll('button')
+    const nextButtonFound = allButtons.some(b => b.text().includes('次の問題へ'))
+    expect(nextButtonFound).toBe(true)
   })
 
   it('should navigate to result after last question', async () => {

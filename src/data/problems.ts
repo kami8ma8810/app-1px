@@ -18,12 +18,17 @@ export const problems: Problem[] = [
       </div>
     `,
     baseCSS: `
+      body {
+        background: #ffffff;
+        margin: 0;
+        padding: 0;
+      }
       .grid-container {
         display: grid;
         grid-template-columns: repeat(3, 100px);
         gap: 20px;
         padding: 40px;
-        background: #f0f0f0;
+        background: #ffffff;
       }
       .grid-item {
         width: 100px;
@@ -35,6 +40,8 @@ export const problems: Problem[] = [
         justify-content: center;
         font-size: 24px;
         font-weight: bold;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       }
     `,
     modifiedHTML: `
@@ -48,12 +55,17 @@ export const problems: Problem[] = [
       </div>
     `,
     modifiedCSS: `
+      body {
+        background: #ffffff;
+        margin: 0;
+        padding: 0;
+      }
       .grid-container {
         display: grid;
         grid-template-columns: repeat(3, 100px);
         gap: 20px;
         padding: 40px;
-        background: #f0f0f0;
+        background: #ffffff;
       }
       .grid-item {
         width: 100px;
@@ -65,6 +77,8 @@ export const problems: Problem[] = [
         justify-content: center;
         font-size: 24px;
         font-weight: bold;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       }
     `,
     answerArea: {

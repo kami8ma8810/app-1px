@@ -176,6 +176,14 @@ const goToTop = () => {
     router.push('/')
   }
 }
+
+// テスト用にエクスポート
+defineExpose({
+  handleAnswer,
+  hasAnswered,
+  isCorrect,
+  showAnswer
+})
 </script>
 
 <style scoped>
