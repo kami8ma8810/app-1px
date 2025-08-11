@@ -113,6 +113,14 @@ import { generateTitleImage, downloadImage } from '../utils/canvas'
 
 const router = useRouter()
 const gameStore = useGameStore()
+
+// ゲームが完了していない場合はトップページにリダイレクト
+onMounted(() => {
+  if (!gameStore.isGameFinished || gameStore.problems.length === 0) {
+    router.push('/')
+    return
+  }
+})
 const titleCanvas = ref<HTMLCanvasElement>()
 
 const result = computed(() => gameStore.getResult())

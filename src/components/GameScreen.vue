@@ -3,27 +3,42 @@
     <!-- ヘッダー -->
     <div class="backdrop-blur-md bg-white/70 shadow-lg">
       <div class="p-4 lg:p-6">
-        <div class="max-w-4xl mx-auto">
+        <div class="max-w-6xl mx-auto flex items-center gap-4">
+          <!-- トップに戻るボタン -->
+          <button
+            class="flex items-center gap-2 px-4 py-2 text-gray-700 bg-white/50 hover:bg-white/70 rounded-lg
+                   focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2
+                   transition-colors duration-150"
+            @click="goToTop"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+            </svg>
+            <span class="hidden sm:inline font-medium">トップに戻る</span>
+          </button>
+          
           <!-- 進行状況 -->
-          <div class="flex items-center justify-between mb-3">
-            <span class="text-lg font-bold text-gray-800">
-              問題 {{ gameStore.gameProgress }}
-            </span>
-            <span class="text-sm text-gray-600">
-              10問中
-            </span>
-          </div>
-          <!-- プログレスバー -->
-          <div class="relative h-3 bg-gray-200 rounded-full overflow-hidden shadow-inner">
-            <div 
-              class="absolute inset-y-0 left-0 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full transition-all duration-500 ease-out shadow-lg" 
-              :style="{ width: `${(gameStore.gameProgress - 1) * 10}%` }"
-            />
-            <!-- プログレスバーのハイライト -->
-            <div 
-              class="absolute inset-y-0 left-0 bg-gradient-to-r from-white/0 via-white/30 to-white/0 rounded-full transition-all duration-500 ease-out" 
-              :style="{ width: `${(gameStore.gameProgress - 1) * 10}%` }"
-            />
+          <div class="flex-1 max-w-4xl">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-lg font-bold text-gray-800">
+                問題 {{ gameStore.gameProgress }}
+              </span>
+              <span class="text-sm text-gray-600">
+                10問中
+              </span>
+            </div>
+            <!-- プログレスバー -->
+            <div class="relative h-3 bg-gray-200 rounded-full overflow-hidden shadow-inner">
+              <div 
+                class="absolute inset-y-0 left-0 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full transition-all duration-500 ease-out shadow-lg" 
+                :style="{ width: `${(gameStore.gameProgress - 1) * 10}%` }"
+              />
+              <!-- プログレスバーのハイライト -->
+              <div 
+                class="absolute inset-y-0 left-0 bg-gradient-to-r from-white/0 via-white/30 to-white/0 rounded-full transition-all duration-500 ease-out" 
+                :style="{ width: `${(gameStore.gameProgress - 1) * 10}%` }"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -93,13 +108,20 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useGameStore } from '../stores/game'
 import ProblemDisplay from './ProblemDisplay.vue'
 
 const router = useRouter()
 const gameStore = useGameStore()
+
+// ゲームが開始されていない場合はトップページにリダイレクト
+onMounted(() => {
+  if (!gameStore.currentProblem || gameStore.problems.length === 0) {
+    router.push('/')
+  }
+})
 
 const currentProblem = computed(() => gameStore.currentProblem)
 const showAnswer = ref(false)
@@ -144,6 +166,14 @@ const nextProblem = () => {
     showNextButton.value = false
     hasAnswered.value = false
     isCorrect.value = false
+  }
+}
+
+const goToTop = () => {
+  // 確認ダイアログを表示
+  if (confirm('ゲームを中断してトップページに戻りますか？')) {
+    gameStore.resetGame()
+    router.push('/')
   }
 }
 </script>

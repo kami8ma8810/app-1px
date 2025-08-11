@@ -9,11 +9,14 @@ import { useGameStore } from '../../stores/game'
 vi.mock('../ProblemDisplay.vue', () => ({
   default: {
     name: 'ProblemDisplay',
-    props: ['problem', 'showModified', 'showAnswer'],
+    props: ['problem', 'showModified', 'showAnswer', 'disabled'],
     emits: ['answer'],
     template: '<div class="problem-display" @click="$emit(\'answer\', true)">Problem Display</div>'
   }
 }))
+
+// Mock window.confirm
+global.confirm = vi.fn(() => true)
 
 describe('GameScreen', () => {
   let router: any
@@ -55,8 +58,10 @@ describe('GameScreen', () => {
       }
     })
     
-    // Initially, next button should not exist
-    expect(wrapper.find('button').exists()).toBe(false)
+    // Initially, next button should not exist (but top button exists)
+    const buttons = wrapper.findAll('button')
+    expect(buttons.length).toBe(1) // Only top button
+    expect(buttons[0].text()).toContain('トップに戻る')
     
     // Simulate correct answer
     const problemDisplay = wrapper.findComponent({ name: 'ProblemDisplay' })
@@ -66,8 +71,9 @@ describe('GameScreen', () => {
     await new Promise(resolve => setTimeout(resolve, 1600))
     
     // Next button should now be visible
-    expect(wrapper.find('button').exists()).toBe(true)
-    expect(wrapper.find('button').text()).toBe('次の問題へ')
+    const buttonsAfter = wrapper.findAll('button')
+    expect(buttonsAfter.length).toBe(2) // Top button + Next button
+    expect(buttonsAfter[1].text()).toBe('次の問題へ')
   })
 
   it('should show answer and explanation on wrong answer', async () => {
@@ -84,11 +90,20 @@ describe('GameScreen', () => {
     
     // Mock wrong answer
     const problemDisplay = wrapper.findComponent({ name: 'ProblemDisplay' })
-    await problemDisplay.vm.$emit('answer', false)
     
-    // Vue updates are async, need to wait for DOM updates
+    // Emit wrong answer
+    problemDisplay.vm.$emit('answer', false)
+    
+    // Multiple nextTicks to ensure all reactive updates are processed
     await wrapper.vm.$nextTick()
-    await new Promise(resolve => setTimeout(resolve, 50))
+    await wrapper.vm.$nextTick()
+    await wrapper.vm.$nextTick()
+    
+    // Check the component's data directly
+    const gameScreenVm = wrapper.vm as any
+    expect(gameScreenVm.hasAnswered).toBe(true)
+    expect(gameScreenVm.isCorrect).toBe(false)
+    expect(gameScreenVm.showAnswer).toBe(true)
     
     // Should show answer and move to next problem
     expect(problemDisplay.props('showAnswer')).toBe(true)
@@ -102,7 +117,8 @@ describe('GameScreen', () => {
     await new Promise(resolve => setTimeout(resolve, 1100))
     
     // Next button should be visible
-    expect(wrapper.find('button').exists()).toBe(true)
+    const buttons = wrapper.findAll('button')
+    expect(buttons.length).toBe(2) // Top button + Next button
   })
 
   it('should navigate to result after last question', async () => {
@@ -128,7 +144,8 @@ describe('GameScreen', () => {
     
     // Wait for timeout and click next
     await new Promise(resolve => setTimeout(resolve, 1600))
-    await wrapper.find('button').trigger('click')
+    const buttons = wrapper.findAll('button')
+    await buttons[1].trigger('click') // Click the next button, not the top button
     
     expect(push).toHaveBeenCalledWith('/result')
   })
