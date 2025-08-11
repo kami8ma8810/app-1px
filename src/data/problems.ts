@@ -308,7 +308,7 @@ export const problems: Problem[] = [
   // ボタン系
   {
     id: 'button-1',
-    category: 'button',
+    category: 'button-interactive',
     title: 'ボタンの高さの違い',
     description: '1つのボタンの高さが1px違います',
     baseHTML: `
