@@ -47,8 +47,33 @@
             :problem="currentProblem"
             :show-modified="true"
             :show-answer="showAnswer"
+            :disabled="hasAnswered"
             @answer="handleAnswer"
           />
+        </div>
+      </div>
+      
+      <!-- 回答後の説明 -->
+      <div v-if="hasAnswered && currentProblem" class="mt-6 animate-fade-in">
+        <div class="backdrop-blur-md bg-white/70 rounded-2xl p-6 shadow-glass max-w-2xl mx-auto">
+          <div class="flex items-center gap-3 mb-3">
+            <div v-if="isCorrect" class="text-emerald-600">
+              <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+              </svg>
+            </div>
+            <div v-else class="text-rose-600">
+              <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+              </svg>
+            </div>
+            <h3 class="text-2xl font-bold" :class="isCorrect ? 'text-emerald-700' : 'text-rose-700'">
+              {{ isCorrect ? '正解！' : '不正解' }}
+            </h3>
+          </div>
+          <p class="text-gray-700 leading-relaxed">
+            {{ currentProblem.description }}
+          </p>
         </div>
       </div>
       
@@ -79,25 +104,35 @@ const gameStore = useGameStore()
 const currentProblem = computed(() => gameStore.currentProblem)
 const showAnswer = ref(false)
 const showNextButton = ref(false)
+const hasAnswered = ref(false)
+const isCorrect = ref(false)
 
 // 問題が変わったときに状態をリセット
 watch(currentProblem, () => {
   showAnswer.value = false
   showNextButton.value = false
+  hasAnswered.value = false
+  isCorrect.value = false
 })
 
-const handleAnswer = async (isCorrect: boolean) => {
-  if (isCorrect) {
-    showAnswer.value = true
+const handleAnswer = async (correct: boolean) => {
+  // 既に回答済みの場合は何もしない
+  if (hasAnswered.value) return
+  
+  hasAnswered.value = true
+  isCorrect.value = correct
+  showAnswer.value = true
+  
+  if (correct) {
     gameStore.submitAnswer(true)
-    
-    // 正解の場合は次へボタンを表示
-    setTimeout(() => {
-      showNextButton.value = true
-    }, 1500)
   } else {
-    // 不正解の場合は再チャレンジ可能（submitAnswerは呼ばない）
+    gameStore.submitAnswer(false)
   }
+  
+  // 次へボタンを表示
+  setTimeout(() => {
+    showNextButton.value = true
+  }, 1000)
 }
 
 const nextProblem = () => {
@@ -107,6 +142,8 @@ const nextProblem = () => {
     // 次の問題に進む前に状態をリセット
     showAnswer.value = false
     showNextButton.value = false
+    hasAnswered.value = false
+    isCorrect.value = false
   }
 }
 </script>

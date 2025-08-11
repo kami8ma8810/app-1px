@@ -70,10 +70,9 @@ describe('GameScreen', () => {
     expect(wrapper.find('button').text()).toBe('次の問題へ')
   })
 
-  it('should not progress on wrong answer', async () => {
+  it('should show answer and explanation on wrong answer', async () => {
     const store = useGameStore()
     store.startNewGame()
-    const initialIndex = store.currentProblemIndex
     
     const wrapper = mount(GameScreen, {
       global: {
@@ -81,15 +80,29 @@ describe('GameScreen', () => {
       }
     })
     
-    // Mock wrong answer
-    const problemDisplay = wrapper.findComponent({ name: 'ProblemDisplay' })
-    problemDisplay.vm.$emit('answer', false)
-    
     await wrapper.vm.$nextTick()
     
-    // Should still be on same problem
-    expect(store.currentProblemIndex).toBe(initialIndex)
-    expect(wrapper.find('button').exists()).toBe(false)
+    // Mock wrong answer
+    const problemDisplay = wrapper.findComponent({ name: 'ProblemDisplay' })
+    await problemDisplay.vm.$emit('answer', false)
+    
+    // Vue updates are async, need to wait for DOM updates
+    await wrapper.vm.$nextTick()
+    await new Promise(resolve => setTimeout(resolve, 50))
+    
+    // Should show answer and move to next problem
+    expect(problemDisplay.props('showAnswer')).toBe(true)
+    expect(problemDisplay.props('disabled')).toBe(true)
+    
+    // Should show explanation
+    const explanationText = wrapper.text()
+    expect(explanationText).toContain('不正解')
+    
+    // Wait for timeout
+    await new Promise(resolve => setTimeout(resolve, 1100))
+    
+    // Next button should be visible
+    expect(wrapper.find('button').exists()).toBe(true)
   })
 
   it('should navigate to result after last question', async () => {

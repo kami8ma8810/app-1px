@@ -2,7 +2,8 @@
   <div class="w-full h-full relative">
     <div class="relative bg-white/80 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden border border-white/50">
       <div 
-        class="absolute inset-0 z-10 cursor-pointer"
+        class="absolute inset-0 z-10"
+        :class="{ 'cursor-pointer': !disabled, 'cursor-not-allowed': disabled }"
         @click="handleClick"
         @touchstart="handleTouch"
       />
@@ -73,6 +74,7 @@ const props = defineProps<{
   problem: Problem
   showModified: boolean
   showAnswer?: boolean
+  disabled?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -127,7 +129,7 @@ const onFrameLoad = () => {
 }
 
 const checkAnswer = (x: number, y: number) => {
-  if (!props.showModified || showAnswer.value || showAnswerProp.value) return
+  if (!props.showModified || showAnswer.value || showAnswerProp.value || props.disabled) return
   
   const rect = problemFrame.value?.getBoundingClientRect()
   if (!rect) return
@@ -146,9 +148,8 @@ const checkAnswer = (x: number, y: number) => {
   
   feedback.value = isCorrect ? 'correct' : 'incorrect'
   
-  if (isCorrect) {
-    showAnswer.value = true
-  }
+  // 正解・不正解に関わらず答えを表示
+  showAnswer.value = true
   
   emit('answer', isCorrect)
   
