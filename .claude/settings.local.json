@@ -18,7 +18,12 @@
       "Bash(npm install:*)",
       "Bash(npx tailwindcss init:*)",
       "Bash(npm uninstall:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git reset:*)",
+      "Bash(git rm:*)",
+      "Bash(git push:*)",
+      "Bash(npm run test:*)",
+      "Bash(git commit:*)"
     ],
     "deny": []
   }

@@ -68,7 +68,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useGameStore } from '../stores/game'
 import ProblemDisplay from './ProblemDisplay.vue'
@@ -79,6 +79,12 @@ const gameStore = useGameStore()
 const currentProblem = computed(() => gameStore.currentProblem)
 const showAnswer = ref(false)
 const showNextButton = ref(false)
+
+// 問題が変わったときに状態をリセット
+watch(currentProblem, () => {
+  showAnswer.value = false
+  showNextButton.value = false
+})
 
 const handleAnswer = async (isCorrect: boolean) => {
   if (isCorrect) {
@@ -95,11 +101,12 @@ const handleAnswer = async (isCorrect: boolean) => {
 }
 
 const nextProblem = () => {
-  showAnswer.value = false
-  showNextButton.value = false
-  
   if (gameStore.isGameFinished) {
     router.push('/result')
+  } else {
+    // 次の問題に進む前に状態をリセット
+    showAnswer.value = false
+    showNextButton.value = false
   }
 }
 </script>

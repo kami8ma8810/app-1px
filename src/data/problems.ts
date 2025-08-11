@@ -573,7 +573,475 @@ export const problems: Problem[] = [
       width: 250,
       height: 120
     }
+  },
+
+  // 背景系
+  {
+    id: 'background-1',
+    category: 'background',
+    title: '背景グラデーションの角度',
+    description: '1つのセクションの背景グラデーション角度が1度違います',
+    baseHTML: `
+      <div class="sections">
+        <div class="section section-1">Section 1</div>
+        <div class="section section-2">Section 2</div>
+        <div class="section section-3">Section 3</div>
+      </div>
+    `,
+    baseCSS: `
+      .sections {
+        display: flex;
+        gap: 20px;
+        padding: 40px;
+        background: #ffffff;
+      }
+      .section {
+        width: 200px;
+        height: 150px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        font-size: 18px;
+      }
+      .section-1 {
+        background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+      }
+      .section-2 {
+        background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
+      }
+      .section-3 {
+        background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%);
+      }
+    `,
+    modifiedHTML: `
+      <div class="sections">
+        <div class="section section-1">Section 1</div>
+        <div class="section section-2" style="background: linear-gradient(46deg, #f093fb 0%, #f5576c 100%);">Section 2</div>
+        <div class="section section-3">Section 3</div>
+      </div>
+    `,
+    modifiedCSS: `
+      .sections {
+        display: flex;
+        gap: 20px;
+        padding: 40px;
+        background: #ffffff;
+      }
+      .section {
+        width: 200px;
+        height: 150px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        font-size: 18px;
+      }
+      .section-1 {
+        background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+      }
+      .section-2 {
+        background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
+      }
+      .section-3 {
+        background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%);
+      }
+    `,
+    answerArea: {
+      x: 260,
+      y: 40,
+      width: 200,
+      height: 150
+    }
+  },
+
+  // シャドウ系
+  {
+    id: 'shadow-1',
+    category: 'shadow-effect',
+    title: 'ボックスシャドウのぼかし',
+    description: '1つの要素のシャドウのぼかしが1px違います',
+    baseHTML: `
+      <div class="shadow-boxes">
+        <div class="shadow-box">Box 1</div>
+        <div class="shadow-box">Box 2</div>
+        <div class="shadow-box">Box 3</div>
+      </div>
+    `,
+    baseCSS: `
+      .shadow-boxes {
+        display: flex;
+        gap: 40px;
+        padding: 60px;
+        background: #ffffff;
+        justify-content: center;
+      }
+      .shadow-box {
+        width: 150px;
+        height: 150px;
+        background: white;
+        border: 1px solid #e9ecef;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        color: #333333;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+    `,
+    modifiedHTML: `
+      <div class="shadow-boxes">
+        <div class="shadow-box">Box 1</div>
+        <div class="shadow-box">Box 2</div>
+        <div class="shadow-box" style="box-shadow: 0 4px 7px rgba(0, 0, 0, 0.1);">Box 3</div>
+      </div>
+    `,
+    modifiedCSS: `
+      .shadow-boxes {
+        display: flex;
+        gap: 40px;
+        padding: 60px;
+        background: #ffffff;
+        justify-content: center;
+      }
+      .shadow-box {
+        width: 150px;
+        height: 150px;
+        background: white;
+        border: 1px solid #e9ecef;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        color: #333333;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+    `,
+    answerArea: {
+      x: 450,
+      y: 60,
+      width: 150,
+      height: 150
+    }
+  },
+
+  // レスポンシブ系
+  {
+    id: 'responsive-1',
+    category: 'responsive',
+    title: 'フレックスアイテムの幅',
+    description: '1つのフレックスアイテムの幅が1px違います',
+    baseHTML: `
+      <div class="flex-container">
+        <div class="flex-item">Item 1</div>
+        <div class="flex-item">Item 2</div>
+        <div class="flex-item">Item 3</div>
+      </div>
+    `,
+    baseCSS: `
+      .flex-container {
+        display: flex;
+        gap: 20px;
+        padding: 40px;
+        background: #ffffff;
+      }
+      .flex-item {
+        flex: 1;
+        min-width: 200px;
+        height: 100px;
+        background: #e3f2fd;
+        border: 1px solid #90caf9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        color: #1976d2;
+      }
+    `,
+    modifiedHTML: `
+      <div class="flex-container">
+        <div class="flex-item">Item 1</div>
+        <div class="flex-item" style="min-width: 201px;">Item 2</div>
+        <div class="flex-item">Item 3</div>
+      </div>
+    `,
+    modifiedCSS: `
+      .flex-container {
+        display: flex;
+        gap: 20px;
+        padding: 40px;
+        background: #ffffff;
+      }
+      .flex-item {
+        flex: 1;
+        min-width: 200px;
+        height: 100px;
+        background: #e3f2fd;
+        border: 1px solid #90caf9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        color: #1976d2;
+      }
+    `,
+    answerArea: {
+      x: 260,
+      y: 40,
+      width: 200,
+      height: 100
+    }
+  },
+
+  // アニメーション系
+  {
+    id: 'animation-1',
+    category: 'animation',
+    title: 'トランジションの時間',
+    description: '1つの要素のトランジション時間が0.01秒違います',
+    baseHTML: `
+      <div class="hover-boxes">
+        <div class="hover-box">Hover 1</div>
+        <div class="hover-box">Hover 2</div>
+        <div class="hover-box">Hover 3</div>
+      </div>
+    `,
+    baseCSS: `
+      .hover-boxes {
+        display: flex;
+        gap: 30px;
+        padding: 40px;
+        background: #ffffff;
+        justify-content: center;
+      }
+      .hover-box {
+        width: 180px;
+        height: 120px;
+        background: #f8f9fa;
+        border: 2px solid #dee2e6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        color: #495057;
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+      .hover-box:hover {
+        background: #e9ecef;
+        transform: translateY(-2px);
+      }
+    `,
+    modifiedHTML: `
+      <div class="hover-boxes">
+        <div class="hover-box">Hover 1</div>
+        <div class="hover-box" style="transition: all 0.31s ease;">Hover 2</div>
+        <div class="hover-box">Hover 3</div>
+      </div>
+    `,
+    modifiedCSS: `
+      .hover-boxes {
+        display: flex;
+        gap: 30px;
+        padding: 40px;
+        background: #ffffff;
+        justify-content: center;
+      }
+      .hover-box {
+        width: 180px;
+        height: 120px;
+        background: #f8f9fa;
+        border: 2px solid #dee2e6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        color: #495057;
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+      .hover-box:hover {
+        background: #e9ecef;
+        transform: translateY(-2px);
+      }
+    `,
+    answerArea: {
+      x: 285,
+      y: 40,
+      width: 180,
+      height: 120
+    }
+  },
+
+  // アイコン・画像系
+  {
+    id: 'icon-image-1',
+    category: 'icon-image',
+    title: '画像のサイズ',
+    description: '1つの画像の幅が1px違います',
+    baseHTML: `
+      <div class="image-gallery">
+        <div class="image-item">
+          <div class="image-placeholder">IMG 1</div>
+        </div>
+        <div class="image-item">
+          <div class="image-placeholder">IMG 2</div>
+        </div>
+        <div class="image-item">
+          <div class="image-placeholder">IMG 3</div>
+        </div>
+      </div>
+    `,
+    baseCSS: `
+      .image-gallery {
+        display: flex;
+        gap: 20px;
+        padding: 40px;
+        background: #ffffff;
+        justify-content: center;
+      }
+      .image-item {
+        border: 1px solid #dee2e6;
+        padding: 10px;
+        background: #f8f9fa;
+      }
+      .image-placeholder {
+        width: 120px;
+        height: 120px;
+        background: #e9ecef;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        color: #6c757d;
+      }
+    `,
+    modifiedHTML: `
+      <div class="image-gallery">
+        <div class="image-item">
+          <div class="image-placeholder" style="width: 121px;">IMG 1</div>
+        </div>
+        <div class="image-item">
+          <div class="image-placeholder">IMG 2</div>
+        </div>
+        <div class="image-item">
+          <div class="image-placeholder">IMG 3</div>
+        </div>
+      </div>
+    `,
+    modifiedCSS: `
+      .image-gallery {
+        display: flex;
+        gap: 20px;
+        padding: 40px;
+        background: #ffffff;
+        justify-content: center;
+      }
+      .image-item {
+        border: 1px solid #dee2e6;
+        padding: 10px;
+        background: #f8f9fa;
+      }
+      .image-placeholder {
+        width: 120px;
+        height: 120px;
+        background: #e9ecef;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        color: #6c757d;
+      }
+    `,
+    answerArea: {
+      x: 150,
+      y: 40,
+      width: 142,
+      height: 142
+    }
+  },
+
+  // ボタン・インタラクティブ系
+  {
+    id: 'button-interactive-1',
+    category: 'button-interactive',
+    title: 'フォーム要素の高さ',
+    description: '1つの入力フィールドの高さが1px違います',
+    baseHTML: `
+      <form class="contact-form">
+        <input type="text" class="form-input" placeholder="名前">
+        <input type="email" class="form-input" placeholder="メールアドレス">
+        <input type="tel" class="form-input" placeholder="電話番号">
+      </form>
+    `,
+    baseCSS: `
+      .contact-form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        padding: 40px;
+        background: #ffffff;
+        max-width: 400px;
+        margin: 0 auto;
+      }
+      .form-input {
+        padding: 12px 16px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        font-size: 16px;
+        color: #495057;
+        background: #ffffff;
+      }
+      .form-input::placeholder {
+        color: #6c757d;
+      }
+      .form-input:focus {
+        outline: none;
+        border-color: #80bdff;
+        box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+      }
+    `,
+    modifiedHTML: `
+      <form class="contact-form">
+        <input type="text" class="form-input" placeholder="名前">
+        <input type="email" class="form-input" style="padding-top: 13px; padding-bottom: 13px;" placeholder="メールアドレス">
+        <input type="tel" class="form-input" placeholder="電話番号">
+      </form>
+    `,
+    modifiedCSS: `
+      .contact-form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        padding: 40px;
+        background: #ffffff;
+        max-width: 400px;
+        margin: 0 auto;
+      }
+      .form-input {
+        padding: 12px 16px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        font-size: 16px;
+        color: #495057;
+        background: #ffffff;
+      }
+      .form-input::placeholder {
+        color: #6c757d;
+      }
+      .form-input:focus {
+        outline: none;
+        border-color: #80bdff;
+        box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+      }
+    `,
+    answerArea: {
+      x: 40,
+      y: 95,
+      width: 400,
+      height: 45
+    }
   }
 ]
-
-// 残りの問題は後で追加
