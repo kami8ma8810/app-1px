@@ -32,29 +32,29 @@
       
       <!-- フィードバック -->
       <transition
-        enter-active-class="transition-all duration-300 ease-out"
-        enter-from-class="opacity-0 scale-50 rotate-12"
-        enter-to-class="opacity-100 scale-100 rotate-0"
+        enter-active-class="transition-all duration-500 ease-out"
+        enter-from-class="opacity-0 scale-0"
+        enter-to-class="opacity-100 scale-100"
         leave-active-class="transition-all duration-300 ease-in"
-        leave-from-class="opacity-100 scale-100 rotate-0"
-        leave-to-class="opacity-0 scale-150 -rotate-12"
+        leave-from-class="opacity-100 scale-100"
+        leave-to-class="opacity-0 scale-125"
       >
         <div 
           v-if="feedback" 
-          class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20"
+          class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 pointer-events-none"
         >
           <div 
-            class="px-12 py-6 text-4xl font-black text-white rounded-2xl shadow-2xl backdrop-blur-md"
+            class="px-16 py-8 text-5xl font-black text-white rounded-3xl shadow-2xl"
             :class="{
               'bg-gradient-to-r from-emerald-500 to-green-600': feedback === 'correct',
               'bg-gradient-to-r from-red-500 to-rose-600': feedback === 'incorrect'
             }"
           >
-            <div class="flex items-center gap-3">
-              <svg v-if="feedback === 'correct'" class="w-10 h-10" fill="currentColor" viewBox="0 0 20 20">
+            <div class="flex items-center gap-4">
+              <svg v-if="feedback === 'correct'" class="w-12 h-12" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
               </svg>
-              <svg v-else class="w-10 h-10" fill="currentColor" viewBox="0 0 20 20">
+              <svg v-else class="w-12 h-12" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
               </svg>
               {{ feedback === 'correct' ? '正解！' : '不正解' }}
@@ -155,7 +155,7 @@ const checkAnswer = (x: number, y: number) => {
   
   setTimeout(() => {
     feedback.value = null
-  }, 2000)
+  }, 2500)
 }
 
 const handleClick = (event: MouseEvent) => {
