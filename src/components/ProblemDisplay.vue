@@ -1,6 +1,6 @@
 <template>
   <div class="w-full h-full relative">
-    <div class="relative bg-white/80 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden border border-white/50">
+    <div class="relative bg-white/80 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/50">
       <div 
         class="absolute inset-0 z-10"
         :class="{ 'cursor-pointer': !disabled, 'cursor-not-allowed': disabled }"
@@ -29,20 +29,21 @@
       >
         <div class="absolute inset-0 bg-gradient-to-r from-emerald-500/0 via-emerald-500/30 to-emerald-500/0 animate-shimmer"></div>
       </div>
-      
-      <!-- フィードバック -->
-      <transition
-        enter-active-class="transition-all duration-500 ease-out"
-        enter-from-class="opacity-0 scale-0"
-        enter-to-class="opacity-100 scale-100"
-        leave-active-class="transition-all duration-300 ease-in"
-        leave-from-class="opacity-100 scale-100"
-        leave-to-class="opacity-0 scale-125"
+    </div>
+    
+    <!-- フィードバック（外側に配置） -->
+    <transition
+      enter-active-class="transition-all duration-500 ease-out"
+      enter-from-class="opacity-0 scale-0"
+      enter-to-class="opacity-100 scale-100"
+      leave-active-class="transition-all duration-300 ease-in"
+      leave-from-class="opacity-100 scale-100"
+      leave-to-class="opacity-0 scale-125"
+    >
+      <div 
+        v-if="feedback" 
+        class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 pointer-events-none"
       >
-        <div 
-          v-if="feedback" 
-          class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 pointer-events-none"
-        >
           <div 
             class="px-16 py-8 text-5xl font-black text-white rounded-3xl shadow-2xl"
             :class="{
@@ -62,7 +63,6 @@
           </div>
         </div>
       </transition>
-    </div>
   </div>
 </template>
 
@@ -129,10 +129,14 @@ const onFrameLoad = () => {
 }
 
 const checkAnswer = (x: number, y: number) => {
-  if (!props.showModified || showAnswer.value || showAnswerProp.value || props.disabled) return
+  if (!props.showModified || showAnswer.value || showAnswerProp.value || props.disabled) {
+    return
+  }
   
   const rect = problemFrame.value?.getBoundingClientRect()
-  if (!rect) return
+  if (!rect) {
+    return
+  }
   
   const relativeX = x - rect.left
   const relativeY = y - rect.top
@@ -146,6 +150,7 @@ const checkAnswer = (x: number, y: number) => {
     relativeY >= answerArea.y - margin &&
     relativeY <= answerArea.y + answerArea.height + margin
   
+  // フィードバックを設定
   feedback.value = isCorrect ? 'correct' : 'incorrect'
   
   // 正解・不正解に関わらず答えを表示
