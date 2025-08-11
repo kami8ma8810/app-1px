@@ -163,18 +163,19 @@ export const problems: Problem[] = [
         list-style: none;
         padding: 30px;
         margin: 0;
-        background: #2c3e50;
+        background: #ffffff;
       }
       .menu-item {
         padding: 15px 20px;
         margin-bottom: 10px;
-        background: #34495e;
-        color: white;
+        background: #f8f9fa;
+        color: #333333;
+        border: 1px solid #e9ecef;
         cursor: pointer;
         transition: background 0.3s;
       }
       .menu-item:hover {
-        background: #4a5f7a;
+        background: #e9ecef;
       }
       .menu-item:last-child {
         margin-bottom: 0;
@@ -194,18 +195,19 @@ export const problems: Problem[] = [
         list-style: none;
         padding: 30px;
         margin: 0;
-        background: #2c3e50;
+        background: #ffffff;
       }
       .menu-item {
         padding: 15px 20px;
         margin-bottom: 10px;
-        background: #34495e;
-        color: white;
+        background: #f8f9fa;
+        color: #333333;
+        border: 1px solid #e9ecef;
         cursor: pointer;
         transition: background 0.3s;
       }
       .menu-item:hover {
-        background: #4a5f7a;
+        background: #e9ecef;
       }
       .menu-item:last-child {
         margin-bottom: 0;
@@ -217,7 +219,361 @@ export const problems: Problem[] = [
       width: 740,
       height: 50
     }
+  },
+
+  // テキスト系
+  {
+    id: 'text-1',
+    category: 'text',
+    title: 'フォントサイズの違い',
+    description: '1つの段落のフォントサイズが1px違います',
+    baseHTML: `
+      <article class="article">
+        <h2 class="title">最新のニュース</h2>
+        <p class="paragraph">昨日、新しい技術発表がありました。この技術は多くの分野で活用されることが期待されています。</p>
+        <p class="paragraph">専門家によると、この技術により作業効率が大幅に向上する可能性があるとのことです。</p>
+        <p class="paragraph">今後の展開が非常に楽しみです。詳細については追って報告いたします。</p>
+      </article>
+    `,
+    baseCSS: `
+      .article {
+        padding: 40px;
+        background: #ffffff;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+      .title {
+        font-size: 28px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        color: #333333;
+      }
+      .paragraph {
+        font-size: 16px;
+        line-height: 1.6;
+        margin-bottom: 15px;
+        color: #555555;
+      }
+    `,
+    modifiedHTML: `
+      <article class="article">
+        <h2 class="title">最新のニュース</h2>
+        <p class="paragraph">昨日、新しい技術発表がありました。この技術は多くの分野で活用されることが期待されています。</p>
+        <p class="paragraph" style="font-size: 17px;">専門家によると、この技術により作業効率が大幅に向上する可能性があるとのことです。</p>
+        <p class="paragraph">今後の展開が非常に楽しみです。詳細については追って報告いたします。</p>
+      </article>
+    `,
+    modifiedCSS: `
+      .article {
+        padding: 40px;
+        background: #ffffff;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+      .title {
+        font-size: 28px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        color: #333333;
+      }
+      .paragraph {
+        font-size: 16px;
+        line-height: 1.6;
+        margin-bottom: 15px;
+        color: #555555;
+      }
+    `,
+    answerArea: {
+      x: 40,
+      y: 110,
+      width: 720,
+      height: 40
+    }
+  },
+
+  // ボタン系
+  {
+    id: 'button-1',
+    category: 'button',
+    title: 'ボタンの高さの違い',
+    description: '1つのボタンの高さが1px違います',
+    baseHTML: `
+      <div class="button-group">
+        <button class="btn btn-primary">保存</button>
+        <button class="btn btn-secondary">キャンセル</button>
+        <button class="btn btn-danger">削除</button>
+      </div>
+    `,
+    baseCSS: `
+      .button-group {
+        display: flex;
+        gap: 20px;
+        padding: 40px;
+        background: #ffffff;
+        justify-content: center;
+      }
+      .btn {
+        padding: 12px 24px;
+        font-size: 16px;
+        font-weight: 500;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .btn-primary {
+        background: #007bff;
+        color: white;
+      }
+      .btn-secondary {
+        background: #6c757d;
+        color: white;
+      }
+      .btn-danger {
+        background: #dc3545;
+        color: white;
+      }
+    `,
+    modifiedHTML: `
+      <div class="button-group">
+        <button class="btn btn-primary">保存</button>
+        <button class="btn btn-secondary" style="padding-top: 13px; padding-bottom: 13px;">キャンセル</button>
+        <button class="btn btn-danger">削除</button>
+      </div>
+    `,
+    modifiedCSS: `
+      .button-group {
+        display: flex;
+        gap: 20px;
+        padding: 40px;
+        background: #ffffff;
+        justify-content: center;
+      }
+      .btn {
+        padding: 12px 24px;
+        font-size: 16px;
+        font-weight: 500;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .btn-primary {
+        background: #007bff;
+        color: white;
+      }
+      .btn-secondary {
+        background: #6c757d;
+        color: white;
+      }
+      .btn-danger {
+        background: #dc3545;
+        color: white;
+      }
+    `,
+    answerArea: {
+      x: 250,
+      y: 40,
+      width: 120,
+      height: 48
+    }
+  },
+
+  // アイコン系
+  {
+    id: 'icon-1',
+    category: 'icon',
+    title: 'アイコンの位置ずれ',
+    description: '1つのアイコンが1px右にずれています',
+    baseHTML: `
+      <div class="icon-list">
+        <div class="icon-item">
+          <div class="icon">📧</div>
+          <span>メール</span>
+        </div>
+        <div class="icon-item">
+          <div class="icon">📱</div>
+          <span>電話</span>
+        </div>
+        <div class="icon-item">
+          <div class="icon">📍</div>
+          <span>位置</span>
+        </div>
+      </div>
+    `,
+    baseCSS: `
+      .icon-list {
+        display: flex;
+        gap: 40px;
+        padding: 40px;
+        background: #ffffff;
+        justify-content: center;
+      }
+      .icon-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+      }
+      .icon {
+        font-size: 48px;
+        width: 80px;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f8f9fa;
+        border-radius: 12px;
+        border: 1px solid #e9ecef;
+      }
+      .icon-item span {
+        font-size: 14px;
+        color: #666666;
+      }
+    `,
+    modifiedHTML: `
+      <div class="icon-list">
+        <div class="icon-item">
+          <div class="icon">📧</div>
+          <span>メール</span>
+        </div>
+        <div class="icon-item">
+          <div class="icon" style="position: relative; left: 1px;">📱</div>
+          <span>電話</span>
+        </div>
+        <div class="icon-item">
+          <div class="icon">📍</div>
+          <span>位置</span>
+        </div>
+      </div>
+    `,
+    modifiedCSS: `
+      .icon-list {
+        display: flex;
+        gap: 40px;
+        padding: 40px;
+        background: #ffffff;
+        justify-content: center;
+      }
+      .icon-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+      }
+      .icon {
+        font-size: 48px;
+        width: 80px;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f8f9fa;
+        border-radius: 12px;
+        border: 1px solid #e9ecef;
+      }
+      .icon-item span {
+        font-size: 14px;
+        color: #666666;
+      }
+    `,
+    answerArea: {
+      x: 310,
+      y: 40,
+      width: 80,
+      height: 80
+    }
+  },
+
+  // パディング系
+  {
+    id: 'padding-1',
+    category: 'padding',
+    title: 'カードのパディング',
+    description: '1つのカードの左パディングが1px違います',
+    baseHTML: `
+      <div class="card-wrapper">
+        <div class="info-card">
+          <h3>基本プラン</h3>
+          <p>個人利用に最適なプランです</p>
+        </div>
+        <div class="info-card">
+          <h3>プロプラン</h3>
+          <p>ビジネス利用に最適なプランです</p>
+        </div>
+      </div>
+    `,
+    baseCSS: `
+      .card-wrapper {
+        display: flex;
+        gap: 30px;
+        padding: 40px;
+        background: #ffffff;
+        justify-content: center;
+      }
+      .info-card {
+        width: 250px;
+        padding: 30px;
+        background: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+      }
+      .info-card h3 {
+        font-size: 20px;
+        margin-bottom: 10px;
+        color: #333333;
+      }
+      .info-card p {
+        font-size: 14px;
+        color: #666666;
+        line-height: 1.5;
+      }
+    `,
+    modifiedHTML: `
+      <div class="card-wrapper">
+        <div class="info-card" style="padding-left: 31px;">
+          <h3>基本プラン</h3>
+          <p>個人利用に最適なプランです</p>
+        </div>
+        <div class="info-card">
+          <h3>プロプラン</h3>
+          <p>ビジネス利用に最適なプランです</p>
+        </div>
+      </div>
+    `,
+    modifiedCSS: `
+      .card-wrapper {
+        display: flex;
+        gap: 30px;
+        padding: 40px;
+        background: #ffffff;
+        justify-content: center;
+      }
+      .info-card {
+        width: 250px;
+        padding: 30px;
+        background: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+      }
+      .info-card h3 {
+        font-size: 20px;
+        margin-bottom: 10px;
+        color: #333333;
+      }
+      .info-card p {
+        font-size: 14px;
+        color: #666666;
+        line-height: 1.5;
+      }
+    `,
+    answerArea: {
+      x: 145,
+      y: 40,
+      width: 250,
+      height: 120
+    }
   }
 ]
 
-// 残りの問題は後で追加（テキスト系、アイコン・画像系、ボタン系、背景系、シャドウ系、レスポンシブ系、アニメーション系）
+// 残りの問題は後で追加
