@@ -65,18 +65,19 @@ describe('GameScreen', () => {
     })
     
     // Initially, next button should not exist
-    let nextButton = wrapper.find('button:contains("次の問題へ")')
-    expect(nextButton.exists()).toBe(false)
+    const allButtonsInitial = wrapper.findAll('button')
+    const nextButtonInitialFound = allButtonsInitial.some(b => b.text().includes('次の問題へ'))
+    expect(nextButtonInitialFound).toBe(false)
     
     // Simulate correct answer
     const problemDisplay = wrapper.findComponent({ name: 'ProblemDisplay' })
-    await problemDisplay.trigger('click')
+    await problemDisplay.vm.$emit('answer', true)
     
-    // Wait for timeout
-    await new Promise(resolve => setTimeout(resolve, 1600))
+    // Wait for Vue updates and timeout
+    await wrapper.vm.$nextTick()
+    await new Promise(resolve => setTimeout(resolve, 1100))
     
     // Next button should now be visible
-    nextButton = wrapper.find('button')
     const allButtons = wrapper.findAll('button')
     const nextButtonFound = allButtons.some(b => b.text().includes('次の問題へ'))
     expect(nextButtonFound).toBe(true)
@@ -103,17 +104,19 @@ describe('GameScreen', () => {
     expect(problemDisplay.props('showAnswer')).toBe(false)
     expect(problemDisplay.props('disabled')).toBe(false)
     
-    // Simulate wrong answer by clicking the Wrong button
-    const wrongButton = problemDisplay.find('button')
-    await wrongButton.trigger('click')
+    // Emit answer event directly from ProblemDisplay
+    await problemDisplay.vm.$emit('answer', false)
     
-    // Wait for Vue updates
+    // Wait for Vue updates and handleAnswer to complete
     await wrapper.vm.$nextTick()
-    await new Promise(resolve => setTimeout(resolve, 200))
+    await new Promise(resolve => setTimeout(resolve, 100))
+    
+    // Re-find ProblemDisplay after state update
+    const updatedProblemDisplay = wrapper.findComponent({ name: 'ProblemDisplay' })
     
     // After answer - should show answer and be disabled
-    expect(problemDisplay.props('showAnswer')).toBe(true)
-    expect(problemDisplay.props('disabled')).toBe(true)
+    expect(updatedProblemDisplay.props('showAnswer')).toBe(true)
+    expect(updatedProblemDisplay.props('disabled')).toBe(true)
     
     // Check that explanation is shown
     const html = wrapper.html()

@@ -23,7 +23,14 @@
       "Bash(git rm:*)",
       "Bash(git push:*)",
       "Bash(npm run test:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(npm run lint)",
+      "mcp__ide__getDiagnostics",
+      "mcp__serena-mcp-server__check_onboarding_performed",
+      "mcp__serena-mcp-server__list_dir",
+      "mcp__serena-mcp-server__think_about_collected_information",
+      "Bash(npx playwright:*)",
+      "Bash(curl:*)"
     ],
     "deny": []
   }

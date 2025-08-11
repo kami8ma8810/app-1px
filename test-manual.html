@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>手動テスト手順</title>
+</head>
+<body>
+    <h1>フィードバック表示の手動テスト手順</h1>
+    
+    <ol>
+        <li>ターミナルで <code>npm run dev</code> を実行</li>
+        <li>ブラウザで http://localhost:5173 を開く</li>
+        <li>「GAME START」ボタンをクリック</li>
+        <li>ゲーム画面で問題の任意の場所をクリック</li>
+        <li>「正解！」または「不正解」のフィードバックが表示されるか確認</li>
+    </ol>
+    
+    <h2>期待される動作</h2>
+    <ul>
+        <li>クリック直後に大きな文字で「正解！」または「不正解」が表示される</li>
+        <li>フィードバックは2.5秒後に自動的に消える</li>
+        <li>正解の場合は緑色、不正解の場合は赤色で表示される</li>
+    </ul>
+    
+    <h2>確認済みの事項</h2>
+    <ul>
+        <li>コンソールログで「フィードバックを設定: incorrect」が表示される</li>
+        <li>feedback.valueが正しく設定されている</li>
+        <li>しかし、DOMにフィードバック要素が表示されない</li>
+    </ul>
+</body>
+</html>

@@ -24,19 +24,19 @@
                 問題 {{ gameStore.gameProgress }}
               </span>
               <span class="text-sm text-gray-600">
-                10問中
+                {{ GAME_CONFIG.TOTAL_QUESTIONS }}問中
               </span>
             </div>
             <!-- プログレスバー -->
             <div class="relative h-3 bg-gray-200 rounded-full overflow-hidden shadow-inner">
               <div 
                 class="absolute inset-y-0 left-0 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full transition-all duration-500 ease-out shadow-lg" 
-                :style="{ width: `${(gameStore.gameProgress - 1) * 10}%` }"
+                :style="{ width: `${(gameStore.gameProgress - 1) * (100 / GAME_CONFIG.TOTAL_QUESTIONS)}%` }"
               />
               <!-- プログレスバーのハイライト -->
               <div 
                 class="absolute inset-y-0 left-0 bg-gradient-to-r from-white/0 via-white/30 to-white/0 rounded-full transition-all duration-500 ease-out" 
-                :style="{ width: `${(gameStore.gameProgress - 1) * 10}%` }"
+                :style="{ width: `${(gameStore.gameProgress - 1) * (100 / GAME_CONFIG.TOTAL_QUESTIONS)}%` }"
               />
             </div>
           </div>
@@ -112,6 +112,7 @@ import { computed, ref, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useGameStore } from '../stores/game'
 import ProblemDisplay from './ProblemDisplay.vue'
+import { ANIMATION_DURATIONS, GAME_CONFIG } from '../constants/game'
 
 const router = useRouter()
 const gameStore = useGameStore()
@@ -154,7 +155,7 @@ const handleAnswer = async (correct: boolean) => {
   // 次へボタンを表示
   setTimeout(() => {
     showNextButton.value = true
-  }, 1000)
+  }, ANIMATION_DURATIONS.SHOW_NEXT_BUTTON_DELAY)
 }
 
 const nextProblem = () => {

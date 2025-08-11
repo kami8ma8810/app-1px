@@ -1,40 +1,42 @@
 <template>
-  <div class="w-full h-full relative">
-    <div class="relative bg-white/80 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/50">
-      <div 
-        class="absolute inset-0 z-10"
-        :class="{ 'cursor-pointer': !disabled, 'cursor-not-allowed': disabled }"
-        @click="handleClick"
-        @touchstart="handleTouch"
-      />
-      
-      <iframe
-        ref="problemFrame"
-        class="w-full min-h-[400px] border-0 block transition-all duration-300"
-        :class="{ 'opacity-90': showAnswer || showAnswerProp }"
-        :srcdoc="problemHTML"
-        @load="onFrameLoad"
-      />
-      
-      <!-- 正解エリアのハイライト -->
-      <div 
-        v-if="showAnswer || showAnswerProp" 
-        class="absolute border-4 border-emerald-500 bg-emerald-500/20 pointer-events-none rounded-lg"
-        :style="{
-          left: `${problem.answerArea.x}px`,
-          top: `${problem.answerArea.y}px`,
-          width: `${problem.answerArea.width}px`,
-          height: `${problem.answerArea.height}px`
-        }"
-      >
-        <div class="absolute inset-0 bg-gradient-to-r from-emerald-500/0 via-emerald-500/30 to-emerald-500/0 animate-shimmer"></div>
+  <div>
+    <div class="w-full h-full relative">
+      <div class="relative bg-white/80 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/50">
+        <div 
+          class="absolute inset-0 z-10"
+          :class="{ 'cursor-pointer': !disabled, 'cursor-not-allowed': disabled }"
+          @click="handleClick"
+          @touchstart="handleTouch"
+        />
+        
+        <iframe
+          ref="problemFrame"
+          class="w-full min-h-[400px] border-0 block transition-all duration-300"
+          :class="{ 'opacity-90': showAnswer || showAnswerProp }"
+          :srcdoc="problemHTML"
+          @load="onFrameLoad"
+        />
+        
+        <!-- 正解エリアのハイライト -->
+        <div 
+          v-if="showAnswer || showAnswerProp" 
+          class="absolute border-4 border-emerald-500 bg-emerald-500/20 pointer-events-none rounded-lg"
+          :style="{
+            left: `${problem.answerArea.x}px`,
+            top: `${problem.answerArea.y}px`,
+            width: `${problem.answerArea.width}px`,
+            height: `${problem.answerArea.height}px`
+          }"
+        >
+          <div class="absolute inset-0 bg-gradient-to-r from-emerald-500/0 via-emerald-500/30 to-emerald-500/0 animate-shimmer"></div>
+        </div>
       </div>
     </div>
     
-    <!-- フィードバック（外側に配置） -->
-    <transition
-      enter-active-class="transition-all duration-500 ease-out"
-      enter-from-class="opacity-0 scale-0"
+    <!-- フィードバック（fixedで配置） -->
+    <Transition
+      enter-active-class="transition-all duration-300 ease-out"
+      enter-from-class="opacity-0 scale-75"
       enter-to-class="opacity-100 scale-100"
       leave-active-class="transition-all duration-300 ease-in"
       leave-from-class="opacity-100 scale-100"
@@ -42,33 +44,34 @@
     >
       <div 
         v-if="feedback" 
-        class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 pointer-events-none"
+        class="fixed inset-0 flex items-center justify-center z-[9999] pointer-events-none"
       >
-          <div 
-            class="px-16 py-8 text-5xl font-black text-white rounded-3xl shadow-2xl"
-            :class="{
-              'bg-gradient-to-r from-emerald-500 to-green-600': feedback === 'correct',
-              'bg-gradient-to-r from-red-500 to-rose-600': feedback === 'incorrect'
-            }"
-          >
-            <div class="flex items-center gap-4">
-              <svg v-if="feedback === 'correct'" class="w-12 h-12" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-              </svg>
-              <svg v-else class="w-12 h-12" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-              </svg>
-              {{ feedback === 'correct' ? '正解！' : '不正解' }}
-            </div>
+        <div 
+          class="px-16 py-8 text-5xl font-black text-white rounded-3xl shadow-2xl"
+          :class="{
+            'bg-gradient-to-r from-emerald-500 to-green-600': feedback === 'correct',
+            'bg-gradient-to-r from-red-500 to-rose-600': feedback === 'incorrect'
+          }"
+        >
+          <div class="flex items-center gap-4">
+            <svg v-if="feedback === 'correct'" class="w-12 h-12" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            <svg v-else class="w-12 h-12" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+            </svg>
+            {{ feedback === 'correct' ? '正解！' : '不正解' }}
           </div>
         </div>
-      </transition>
+      </div>
+    </Transition>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import type { Problem } from '../types'
+import { TOUCH_MARGIN, ANIMATION_DURATIONS } from '../constants/game'
 
 const props = defineProps<{
   problem: Problem
@@ -84,6 +87,11 @@ const emit = defineEmits<{
 const problemFrame = ref<HTMLIFrameElement>()
 const showAnswer = ref(false)
 const feedback = ref<'correct' | 'incorrect' | null>(null)
+
+// feedbackの変更を監視
+watch(feedback, (newVal) => {
+  console.log('feedback changed:', newVal)
+})
 const showAnswerProp = computed(() => props.showAnswer)
 
 const problemHTML = computed(() => {
@@ -129,7 +137,15 @@ const onFrameLoad = () => {
 }
 
 const checkAnswer = (x: number, y: number) => {
+  console.log('checkAnswer called:', { 
+    showModified: props.showModified, 
+    showAnswer: showAnswer.value, 
+    showAnswerProp: showAnswerProp.value, 
+    disabled: props.disabled 
+  })
+  
   if (!props.showModified || showAnswer.value || showAnswerProp.value || props.disabled) {
+    console.log('checkAnswer early return')
     return
   }
   
@@ -142,25 +158,27 @@ const checkAnswer = (x: number, y: number) => {
   const relativeY = y - rect.top
   
   const { answerArea } = props.problem
-  const margin = 30 // タッチデバイスでの誤差を考慮
   
   const isCorrect = 
-    relativeX >= answerArea.x - margin &&
-    relativeX <= answerArea.x + answerArea.width + margin &&
-    relativeY >= answerArea.y - margin &&
-    relativeY <= answerArea.y + answerArea.height + margin
+    relativeX >= answerArea.x - TOUCH_MARGIN &&
+    relativeX <= answerArea.x + answerArea.width + TOUCH_MARGIN &&
+    relativeY >= answerArea.y - TOUCH_MARGIN &&
+    relativeY <= answerArea.y + answerArea.height + TOUCH_MARGIN
   
   // フィードバックを設定
   feedback.value = isCorrect ? 'correct' : 'incorrect'
+  console.log('フィードバックを設定:', feedback.value)
   
   // 正解・不正解に関わらず答えを表示
   showAnswer.value = true
   
   emit('answer', isCorrect)
   
+  console.log('setTimeout設定:', ANIMATION_DURATIONS.FEEDBACK_DISPLAY)
   setTimeout(() => {
+    console.log('フィードバックをnullに設定')
     feedback.value = null
-  }, 2500)
+  }, ANIMATION_DURATIONS.FEEDBACK_DISPLAY)
 }
 
 const handleClick = (event: MouseEvent) => {
@@ -177,6 +195,7 @@ const handleTouch = (event: TouchEvent) => {
 }
 
 watch(() => props.problem, () => {
+  console.log('problem changed in watch')
   showAnswer.value = false
   feedback.value = null
 })

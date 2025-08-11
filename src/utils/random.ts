@@ -1,19 +1,9 @@
-import type { Problem, ProblemCategory } from '../types'
+import type { Problem } from '../types'
 import { problems } from '../data/problems'
+import { PROBLEM_CATEGORIES } from '../constants/game'
 
 export function getRandomProblems(): Problem[] {
-  const categories: ProblemCategory[] = [
-    'grid-layout',
-    'border',
-    'spacing',
-    'text',
-    'icon-image',
-    'button-interactive',
-    'background',
-    'shadow-effect',
-    'responsive',
-    'animation'
-  ]
+  const categories = PROBLEM_CATEGORIES
   
   const selectedProblems: Problem[] = []
   

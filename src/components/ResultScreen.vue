@@ -36,12 +36,12 @@
           <div 
             class="inline-flex items-center justify-center w-32 h-32 rounded-full shadow-2xl text-6xl"
             :class="{
-              'bg-gradient-to-br from-yellow-400 to-amber-600 animate-pulse-slow': result.correctCount === 10,
-              'bg-gradient-to-br from-gray-300 to-gray-500': result.correctCount >= 8,
-              'bg-gradient-to-br from-orange-600 to-orange-800': result.correctCount >= 6,
-              'bg-gradient-to-br from-blue-400 to-blue-600': result.correctCount >= 4,
-              'bg-gradient-to-br from-emerald-400 to-emerald-600': result.correctCount >= 2,
-              'bg-gradient-to-br from-gray-500 to-gray-700': result.correctCount < 2
+              'bg-gradient-to-br from-yellow-400 to-amber-600 animate-pulse-slow': result.correctCount === GAME_CONFIG.SCORE_THRESHOLDS.MASTER,
+              'bg-gradient-to-br from-gray-300 to-gray-500': result.correctCount >= GAME_CONFIG.SCORE_THRESHOLDS.EXPERT,
+              'bg-gradient-to-br from-orange-600 to-orange-800': result.correctCount >= GAME_CONFIG.SCORE_THRESHOLDS.PRO,
+              'bg-gradient-to-br from-blue-400 to-blue-600': result.correctCount >= GAME_CONFIG.SCORE_THRESHOLDS.APPRENTICE,
+              'bg-gradient-to-br from-emerald-400 to-emerald-600': result.correctCount >= GAME_CONFIG.SCORE_THRESHOLDS.BEGINNER,
+              'bg-gradient-to-br from-gray-500 to-gray-700': result.correctCount < GAME_CONFIG.SCORE_THRESHOLDS.BEGINNER
             }"
           >
             <span class="drop-shadow-lg">{{ getTitleEmoji() }}</span>
@@ -110,6 +110,8 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useGameStore } from '../stores/game'
 import { generateTitleImage, downloadImage } from '../utils/canvas'
+import { GAME_CONFIG } from '../constants/game'
+import { storage } from '../utils/storage'
 
 const router = useRouter()
 const gameStore = useGameStore()
@@ -128,19 +130,18 @@ const titleImageUrl = ref<string>('')
 
 const getTitleEmoji = () => {
   const score = result.value.correctCount
-  if (score === 10) return '🏆'
-  if (score >= 8) return '🥇'
-  if (score >= 6) return '🥈'
-  if (score >= 4) return '🥉'
+  if (score === GAME_CONFIG.SCORE_THRESHOLDS.MASTER) return '🏆'
+  if (score >= GAME_CONFIG.SCORE_THRESHOLDS.EXPERT) return '🥇'
+  if (score >= GAME_CONFIG.SCORE_THRESHOLDS.PRO) return '🥈'
+  if (score >= GAME_CONFIG.SCORE_THRESHOLDS.APPRENTICE) return '🥉'
   return '✨'
 }
 
 onMounted(async () => {
   // ベストスコアの更新
-  const currentBest = localStorage.getItem('one-pixel-best-score')
-  const bestScore = currentBest ? parseInt(currentBest, 10) : 0
+  const bestScore = storage.getBestScore()
   if (result.value.correctCount > bestScore) {
-    localStorage.setItem('one-pixel-best-score', result.value.correctCount.toString())
+    storage.setBestScore(result.value.correctCount)
   }
   
   // 称号画像の生成
@@ -158,7 +159,7 @@ const saveImage = async () => {
 }
 
 const shareResult = async () => {
-  const text = `One Pixelで${result.value.correctCount}/10問正解！「${result.value.title}」の称号を獲得しました！`
+  const text = `One Pixelで${result.value.correctCount}/${GAME_CONFIG.TOTAL_QUESTIONS}問正解！「${result.value.title}」の称号を獲得しました！`
   const url = window.location.href
   
   if (navigator.share) {

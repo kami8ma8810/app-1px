@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import type { Problem, GameState, GameResult } from '../types'
 import { getRandomProblems } from '../utils/random'
+import { GAME_CONFIG } from '../constants/game'
 
 export const useGameStore = defineStore('game', {
   state: (): GameState => ({
@@ -51,17 +52,17 @@ export const useGameStore = defineStore('game', {
       const correctCount = this.correctCount
       const totalCount = this.problems.length
       
-      let title = 'もっと頑張ろう！'
-      if (correctCount === 10) {
-        title = 'ピクセルマスター'
-      } else if (correctCount >= 8) {
-        title = 'ピクセルエキスパート'
-      } else if (correctCount >= 6) {
-        title = 'ピクセルプロ'
-      } else if (correctCount >= 4) {
-        title = 'ピクセル見習い'
-      } else if (correctCount >= 2) {
-        title = 'ピクセル初心者'
+      let title = GAME_CONFIG.TITLES.DEFAULT
+      if (correctCount === GAME_CONFIG.SCORE_THRESHOLDS.MASTER) {
+        title = GAME_CONFIG.TITLES.MASTER
+      } else if (correctCount >= GAME_CONFIG.SCORE_THRESHOLDS.EXPERT) {
+        title = GAME_CONFIG.TITLES.EXPERT
+      } else if (correctCount >= GAME_CONFIG.SCORE_THRESHOLDS.PRO) {
+        title = GAME_CONFIG.TITLES.PRO
+      } else if (correctCount >= GAME_CONFIG.SCORE_THRESHOLDS.APPRENTICE) {
+        title = GAME_CONFIG.TITLES.APPRENTICE
+      } else if (correctCount >= GAME_CONFIG.SCORE_THRESHOLDS.BEGINNER) {
+        title = GAME_CONFIG.TITLES.BEGINNER
       }
       
       return {

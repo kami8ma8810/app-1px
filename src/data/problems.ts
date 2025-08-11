@@ -396,7 +396,7 @@ export const problems: Problem[] = [
   // アイコン系
   {
     id: 'icon-1',
-    category: 'icon',
+    category: 'icon-image',
     title: 'アイコンの位置ずれ',
     description: '1つのアイコンが1px右にずれています',
     baseHTML: `
@@ -502,7 +502,7 @@ export const problems: Problem[] = [
   // パディング系
   {
     id: 'padding-1',
-    category: 'padding',
+    category: 'spacing',
     title: 'カードのパディング',
     description: '1つのカードの左パディングが1px違います',
     baseHTML: `
