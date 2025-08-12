@@ -50,8 +50,11 @@
       <div class="text-center mb-6 animate-fade-in">
         <div class="backdrop-blur-md bg-white/50 rounded-2xl px-8 py-4 shadow-glass inline-block">
           <h2 class="text-xl lg:text-2xl font-bold text-gray-800">
-            ずれている箇所をクリックまたはタップしてください
+            1px違う箇所をクリックまたはタップしてください
           </h2>
+          <p v-if="currentProblem" class="text-base text-gray-600 mt-2">
+            {{ currentProblem.hint }}
+          </p>
         </div>
       </div>
       
@@ -68,22 +71,17 @@
         </div>
       </div>
       
-      <!-- 回答後の説明 -->
-      <div v-if="hasAnswered && currentProblem" class="mt-6 animate-fade-in">
+      <!-- 回答後の説明（正解時のみ） -->
+      <div v-if="hasAnswered && currentProblem && isCorrect" class="mt-6 animate-fade-in">
         <div class="backdrop-blur-md bg-white/70 rounded-2xl p-6 shadow-glass max-w-2xl mx-auto">
           <div class="flex items-center gap-3 mb-3">
-            <div v-if="isCorrect" class="text-emerald-600">
+            <div class="text-emerald-600">
               <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
               </svg>
             </div>
-            <div v-else class="text-rose-600">
-              <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-              </svg>
-            </div>
-            <h3 class="text-2xl font-bold" :class="isCorrect ? 'text-emerald-700' : 'text-rose-700'">
-              {{ isCorrect ? '正解！' : '不正解' }}
+            <h3 class="text-2xl font-bold text-emerald-700">
+              正解！
             </h3>
           </div>
           <p class="text-gray-700 leading-relaxed">
@@ -129,6 +127,7 @@ const showAnswer = ref(false)
 const showNextButton = ref(false)
 const hasAnswered = ref(false)
 const isCorrect = ref(false)
+const pendingAnswer = ref<boolean | null>(null)
 
 // 問題が変わったときに状態をリセット
 watch(currentProblem, () => {
@@ -136,6 +135,7 @@ watch(currentProblem, () => {
   showNextButton.value = false
   hasAnswered.value = false
   isCorrect.value = false
+  pendingAnswer.value = null
 })
 
 const handleAnswer = async (correct: boolean) => {
@@ -146,11 +146,8 @@ const handleAnswer = async (correct: boolean) => {
   isCorrect.value = correct
   showAnswer.value = true
   
-  if (correct) {
-    gameStore.submitAnswer(true)
-  } else {
-    gameStore.submitAnswer(false)
-  }
+  // 回答を一時的に保存（次の問題へ進む時に記録）
+  pendingAnswer.value = correct
   
   // 次へボタンを表示
   setTimeout(() => {
@@ -159,6 +156,12 @@ const handleAnswer = async (correct: boolean) => {
 }
 
 const nextProblem = () => {
+  // 保存しておいた回答を記録
+  if (pendingAnswer.value !== null) {
+    gameStore.submitAnswer(pendingAnswer.value)
+    pendingAnswer.value = null
+  }
+  
   if (gameStore.isGameFinished) {
     router.push('/result')
   } else {

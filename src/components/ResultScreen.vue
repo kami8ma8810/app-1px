@@ -111,7 +111,6 @@ import { useRouter } from 'vue-router'
 import { useGameStore } from '../stores/game'
 import { generateTitleImage, downloadImage } from '../utils/canvas'
 import { GAME_CONFIG } from '../constants/game'
-import { storage } from '../utils/storage'
 
 const router = useRouter()
 const gameStore = useGameStore()
@@ -138,12 +137,6 @@ const getTitleEmoji = () => {
 }
 
 onMounted(async () => {
-  // ベストスコアの更新
-  const bestScore = storage.getBestScore()
-  if (result.value.correctCount > bestScore) {
-    storage.setBestScore(result.value.correctCount)
-  }
-  
   // 称号画像の生成
   titleImageUrl.value = await generateTitleImage(
     result.value.title,
