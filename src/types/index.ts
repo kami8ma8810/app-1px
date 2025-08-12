@@ -2,6 +2,7 @@ export interface Problem {
   id: string
   category: ProblemCategory
   title: string
+  hint: string
   description: string
   baseHTML: string
   baseCSS: string
