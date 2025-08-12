@@ -17,19 +17,12 @@
           @load="onFrameLoad"
         />
         
-        <!-- 正解エリアのハイライト -->
-        <div 
-          v-if="showAnswer || showAnswerProp" 
+        <!-- 正解エリアのハイライト（iframe内に表示するため、ここでは非表示） -->
+        <!-- <div 
+          v-if="(showAnswer || showAnswerProp) && isCorrect" 
           class="absolute border-4 border-emerald-500 bg-emerald-500/20 pointer-events-none rounded-lg"
-          :style="{
-            left: `${problem.answerArea.x}px`,
-            top: `${problem.answerArea.y}px`,
-            width: `${problem.answerArea.width}px`,
-            height: `${problem.answerArea.height}px`
-          }"
-        >
-          <div class="absolute inset-0 bg-gradient-to-r from-emerald-500/0 via-emerald-500/30 to-emerald-500/0 animate-shimmer"></div>
-        </div>
+          :style="highlightStyle"
+        /> -->
       </div>
     </div>
     
@@ -87,12 +80,43 @@ const emit = defineEmits<{
 const problemFrame = ref<HTMLIFrameElement>()
 const showAnswer = ref(false)
 const feedback = ref<'correct' | 'incorrect' | null>(null)
+const isCorrect = ref(false)
 
 // feedbackの変更を監視
 watch(feedback, (newVal) => {
   console.log('feedback changed:', newVal)
 })
 const showAnswerProp = computed(() => props.showAnswer)
+
+// ハイライトのスタイルを計算
+const highlightStyle = computed(() => {
+  if (!problemFrame.value) {
+    return {
+      left: `${props.problem.answerArea.x}px`,
+      top: `${props.problem.answerArea.y}px`,
+      width: `${props.problem.answerArea.width}px`,
+      height: `${props.problem.answerArea.height}px`
+    }
+  }
+  
+  // iframeのcomputed styleを取得してborderやpaddingを考慮
+  const iframeStyle = window.getComputedStyle(problemFrame.value)
+  const borderLeftWidth = parseFloat(iframeStyle.borderLeftWidth) || 0
+  const borderTopWidth = parseFloat(iframeStyle.borderTopWidth) || 0
+  const paddingLeft = parseFloat(iframeStyle.paddingLeft) || 0
+  const paddingTop = parseFloat(iframeStyle.paddingTop) || 0
+  
+  // iframe内のスクロール位置を考慮
+  const scrollLeft = problemFrame.value.contentWindow?.scrollX || 0
+  const scrollTop = problemFrame.value.contentWindow?.scrollY || 0
+  
+  return {
+    left: `${props.problem.answerArea.x + borderLeftWidth + paddingLeft - scrollLeft}px`,
+    top: `${props.problem.answerArea.y + borderTopWidth + paddingTop - scrollTop}px`,
+    width: `${props.problem.answerArea.width}px`,
+    height: `${props.problem.answerArea.height}px`
+  }
+})
 
 const problemHTML = computed(() => {
   const html = props.showModified ? props.problem.modifiedHTML : props.problem.baseHTML
@@ -133,7 +157,46 @@ const onFrameLoad = () => {
       doc.documentElement.scrollHeight
     )
     problemFrame.value.style.height = `${height + 20}px`
+    
+    // デバッグ: iframe内のコンテンツの実際のサイズを確認
+    console.log('iframe content size:', {
+      bodyScrollHeight: doc.body.scrollHeight,
+      bodyOffsetHeight: doc.body.offsetHeight,
+      documentScrollHeight: doc.documentElement.scrollHeight,
+      computedHeight: height
+    })
   }
+}
+
+// iframe内にハイライトを表示する
+const showHighlightInIframe = () => {
+  if (!problemFrame.value?.contentWindow || !isCorrect.value) return
+  
+  const doc = problemFrame.value.contentWindow.document
+  const { answerArea } = props.problem
+  
+  // 既存のハイライトを削除
+  const existingHighlight = doc.getElementById('answer-highlight')
+  if (existingHighlight) {
+    existingHighlight.remove()
+  }
+  
+  // ハイライト要素を作成
+  const highlight = doc.createElement('div')
+  highlight.id = 'answer-highlight'
+  highlight.style.position = 'absolute'
+  highlight.style.left = `${answerArea.x}px`
+  highlight.style.top = `${answerArea.y}px`
+  highlight.style.width = `${answerArea.width}px`
+  highlight.style.height = `${answerArea.height}px`
+  highlight.style.border = '4px solid #10b981'
+  highlight.style.backgroundColor = 'rgba(16, 185, 129, 0.2)'
+  highlight.style.borderRadius = '8px'
+  highlight.style.pointerEvents = 'none'
+  highlight.style.zIndex = '9999'
+  
+  // bodyに追加
+  doc.body.appendChild(highlight)
 }
 
 const checkAnswer = (x: number, y: number) => {
@@ -159,20 +222,39 @@ const checkAnswer = (x: number, y: number) => {
   
   const { answerArea } = props.problem
   
-  const isCorrect = 
+  // デバッグ: 座標情報を出力
+  console.log('座標計算デバッグ:', {
+    click: { x, y },
+    iframeRect: { left: rect.left, top: rect.top },
+    relative: { x: relativeX, y: relativeY },
+    answerArea,
+    margin: TOUCH_MARGIN
+  })
+  
+  const correct = 
     relativeX >= answerArea.x - TOUCH_MARGIN &&
     relativeX <= answerArea.x + answerArea.width + TOUCH_MARGIN &&
     relativeY >= answerArea.y - TOUCH_MARGIN &&
     relativeY <= answerArea.y + answerArea.height + TOUCH_MARGIN
   
+  // 正解・不正解の状態を保存
+  isCorrect.value = correct
+  
   // フィードバックを設定
-  feedback.value = isCorrect ? 'correct' : 'incorrect'
+  feedback.value = correct ? 'correct' : 'incorrect'
   console.log('フィードバックを設定:', feedback.value)
   
   // 正解・不正解に関わらず答えを表示
   showAnswer.value = true
   
-  emit('answer', isCorrect)
+  // 正解の場合はハイライトを表示
+  if (correct) {
+    setTimeout(() => {
+      showHighlightInIframe()
+    }, 50)
+  }
+  
+  emit('answer', correct)
   
   console.log('setTimeout設定:', ANIMATION_DURATIONS.FEEDBACK_DISPLAY)
   setTimeout(() => {
@@ -198,20 +280,16 @@ watch(() => props.problem, () => {
   console.log('problem changed in watch')
   showAnswer.value = false
   feedback.value = null
+  isCorrect.value = false
+})
+
+// 答えを表示するときにハイライトも表示
+watch([showAnswer, showAnswerProp, isCorrect], () => {
+  if ((showAnswer.value || showAnswerProp.value) && isCorrect.value) {
+    // 少し遅延を入れてiframeの描画を待つ
+    setTimeout(() => {
+      showHighlightInIframe()
+    }, 100)
+  }
 })
 </script>
-
-<style scoped>
-@keyframes shimmer {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
-}
-
-.animate-shimmer {
-  animation: shimmer 2s infinite;
-}
-</style>
